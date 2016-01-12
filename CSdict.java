@@ -40,28 +40,33 @@ public class CSdict
 				else {
 					// Convert the cmdString byte array to a string and make all lowercase 
 					String cmd = new String(cmdString);
-					cmd = cmsd.toLowerCase();
+					cmd = cmd.toLowerCase().trim();
 
 					if(cmd.startsWith("open")){
 						//TODO: handle command: open SERVER PORT
+						String[] params = extractParamerters("open" , cmd);
 
 					} else if(cmd.startsWith("dict")){
 						//TODO: handle command
 						
 					} else if(cmd.startsWith("set")){
 						//TODO: handle command: set DICTIONARY
+						String[] params = extractParamerters("set" , cmd);
 
 					} else if(cmd.startsWith("currdict")){
 						//TODO: handle command
 
 					} else if(cmd.startsWith("define")){
 						//TODO: handle command: define WORD
+						String[] params = extractParamerters("define" , cmd);
 
 					} else if(cmd.startsWith("match")){
 						//TODO: handle command: match WORD
+						String[] params = extractParamerters("match" , cmd);
 
 					} else if(cmd.startsWith("prefixmatch")){
 						//TODO: handle command: prefixmatch WORD
+						String[] params = extractParamerters("prefixmatch" , cmd);
 
 					} else if(cmd.startsWith("close")){
 						//TODO: handle command
@@ -78,5 +83,26 @@ public class CSdict
 		} catch (IOException exception) {
 		    System.err.println("998 Input error while reading commands, terminating.");
 		}
+    }
+
+    //command: the command that will be removed so we are only left with the params
+    //input: the whole input string
+    //will always return a String[] of size 2, with the second element being empty if there's
+    //only one param
+    private static String[] extractParamerters(String command, String input){
+    	String[] paramArr = new String[2];
+    	//remove the command from the input and trim the whitespace
+    	String paramStr = input.substring(command.length() , input.length()).trim();
+
+    	int firstSpaceIdx = paramStr.indexOf(" ");
+
+    	if(firstSpaceIdx < 0){
+    		paramArr[0] = paramStr;
+    	} else{
+    		paramArr[0] = paramStr.substring(0,firstSpaceIdx).trim();
+    		paramArr[1] = paramStr.substring(firstSpaceIdx + 1 , paramStr.length()).trim();
+    	}
+
+    	return paramArr;
     }
 }
