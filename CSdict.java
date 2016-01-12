@@ -38,9 +38,17 @@ public class CSdict
 				    break;
 				// Start processing the command here.
 				else {
-					// Convert the cmdString byte array to a string and make all lowercase 
-					String cmd = new String(cmdString);
-					cmd = cmd.toLowerCase().trim();
+					// Convert the cmdString byte array to a string and make all lowercase
+					String inputString = new String(cmdString);
+					inputString = inputString.trim();
+
+					String cmd;
+					if(inputString.indexOf(" ") >  0){
+						cmd = inputString.substring(0 , inputString.indexOf(" ")).toLowerCase();
+					} else{
+						cmd = inputString.toLowerCase();
+					}
+					
 
 					if(cmd.startsWith("open")){
 						//TODO: handle command: open SERVER PORT
