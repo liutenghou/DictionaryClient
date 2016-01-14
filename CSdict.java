@@ -53,6 +53,9 @@ public class CSdict
 					if(cmd.startsWith("open")){
 						//TODO: handle command: open SERVER PORT
 						String[] params = extractParamerters("open" , cmd);
+						for(String param: params){
+							System.out.println("testing" + param);
+						}
 
 					} else if(cmd.startsWith("dict")){
 						//TODO: handle command
@@ -81,7 +84,7 @@ public class CSdict
 
 					} else if(cmd.startsWith("quit")){
 						//TODO: handle command
-
+						break;
 					} else{
 						System.out.println("900 Invalid command.");
 					}
