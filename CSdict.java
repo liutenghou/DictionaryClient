@@ -1,7 +1,6 @@
 
 import java.lang.System;
 import java.util.Scanner;
-import java.io.IOException;
 
 //
 // This is an implementation of a simplified version of a command 
@@ -19,10 +18,18 @@ public class CSdict
     static String e901 = "901 Incorrect number of arguments";
     static String e902 = "902 Invalid argument";
     static String e903 = "903 Supplied command not expected at this time";
-    
+    static String e920 = "920 Control connection to xxx on port yyy failed to open";
+    static String e925 = "925 Control connection I/O error, closing control connection";
+    static String e930 = "930 Dictionary does not exist";
+    static String e996 = "996 Too many command line options - Only -d is allowed";
+    static String e997 = "997 Invalid command line option - Only -d is allowed";
+    static String e998 = "998 Input error while reading commands, terminating";
+    static String e999 = "999 Processing error. yyyy";
+
     public static void main(String [] args)
     {
-		byte cmdString[] = new byte[MAX_LEN];
+		//don't need this anymore
+    	//byte cmdString[] = new byte[MAX_LEN];
 		Scanner scan = new Scanner(System.in);
 		
 		if (args.length == PERMITTED_ARGUMENT_COUNT) {
@@ -44,10 +51,32 @@ public class CSdict
 		try{
 			inputHandling(scan);
 		} catch (Exception e) {
-		    System.err.println("Something happened: "+ e.getMessage());
+		    System.err.println(e999 + ": " + e.getMessage());
 		    inputHandling(scan);
 		}
 	    scan.close();	
+    }
+    
+    public static boolean isNumber(String n){
+    	if(n.matches("[0-9]+")){
+			return true;
+		}else{
+			return false;
+		}
+    }
+    
+    public static boolean isDomain(String n){
+    	if(n.matches("^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\."
+    		+"([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
+    		+"\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
+    		+"\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$")
+    		||
+    		n.matches("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$")
+    		){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
     
     public static void inputHandling(Scanner scan){
@@ -73,20 +102,40 @@ public class CSdict
 			//first input to cmd, converted to all lower case
 			String cmd = inputStringArray[0].toLowerCase();
 			
+			
 			if (inputString.length() <= 0){ //length of input too short
 			    continue;
-			    
-			// Start processing the command here.
 			} else if(cmd.equals("#")){
 				continue;
 				
+			// Start processing the command here.	
     		} else if(cmd.equals("open")){
 				//TODO: handle command: open SERVER PORT
+    			//error out if control connection already open
+    			
 				System.out.println("Inside Open: " + cmd);
-				String portNumber = "2628";
-				//if missing port, use default 2628
+				String portNumber = "2628"; //default port
+				String domain = null;
+				
+				
+				//override default port if port present
 				if(inputStringArray.length == 3){
 					portNumber = inputStringArray[2];
+					domain = inputStringArray[1];
+					//check that the port number is a number, error out if not
+					if(!isNumber(portNumber)){
+						System.out.println(e902);
+						continue;
+					}
+					//check that the domain is formatted correctly
+					if(!isDomain(domain)){
+						System.out.println(e902);
+						continue;
+					}
+					
+				//test input for domain and port
+				System.out.println("domain: " + domain + " port: " + portNumber);
+				//incorrect number of arguments	
 				}else if(inputStringArray.length <= 1 || inputStringArray.length > 3){
 					System.out.println(e901);
 					continue;
@@ -119,10 +168,10 @@ public class CSdict
 				//TODO: handle command
 
 			} else if(cmd.equals("quit")){
-				//TODO: handle command
+				System.out.println("Thanks for visiting, come back soon!");
 				break;
 			} else{
-				System.out.println("900 Invalid command.");
+				System.out.println(e900);
 			}
 		}	
     	
