@@ -1,6 +1,8 @@
 
 import java.lang.System;
 import java.util.Scanner;
+import java.net.Socket;
+import java.net.ServerSocket;
 
 //
 // This is an implementation of a simplified version of a command 
@@ -140,6 +142,11 @@ public class CSdict
 					System.out.println(e901);
 					continue;
 				}
+				
+				//convert portNumber to int
+				int portNumberInt = Integer.valueOf(portNumber);
+				
+				//start connection to domain and port
 				
 
 			} else if(cmd.equals("dict")){
