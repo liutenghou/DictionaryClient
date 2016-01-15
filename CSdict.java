@@ -49,8 +49,6 @@ public class CSdict
 					if(cmd.startsWith("open")){
 						//TODO: handle command: open SERVER PORT
 						String[] params = extractParameters("open" , inputString);
-						System.out.println(params[0]);
-						System.out.println(params[1]);
 
 					} else if(cmd.startsWith("dict")){
 						//TODO: handle command
@@ -65,17 +63,21 @@ public class CSdict
 					} else if(cmd.startsWith("define")){
 						//TODO: handle command: define WORD
 						String[] params = extractParameters("define" , inputString);
+						DictCommands.define(params[0]);
 
 					} else if(cmd.startsWith("match")){
 						//TODO: handle command: match WORD
 						String[] params = extractParameters("match" , inputString);
+						DictCommands.match(params[0]);
 
 					} else if(cmd.startsWith("prefixmatch")){
 						//TODO: handle command: prefixmatch WORD
 						String[] params = extractParameters("prefixmatch" , inputString);
+						DictCommands.prefixMatch(params[0]);
 
 					} else if(cmd.startsWith("close")){
 						//TODO: handle command
+						DictCommands.close();
 
 					} else if(cmd.startsWith("quit")){
 						//TODO: handle command
