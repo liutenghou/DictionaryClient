@@ -6,23 +6,19 @@ import java.io.InputStream;
 
 public class DictCommands{
 
-	public static void open(String server, int port){
-
-	}
-
-	public static void define(String word){
+	public static void define(Socket socket, String word){
 		System.out.println("define: " + word);
 	}
 
-	public static void match(String word){
+	public static void match(Socket socket, String word){
 		System.out.println("match: " + word);
 	}
 
-	public static void prefixMatch(String word){
+	public static void prefixMatch(Socket socket, String word){
 		System.out.println("prefixmatch: " + word);
 	};
 
-	public static void close(){
+	public static void close(Socket socket){
 		System.out.println("close");
 	}
 }

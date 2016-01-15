@@ -54,7 +54,6 @@ public class CSdict
 			inputHandling(scan);
 		} catch (Exception e) {
 		    System.err.println(e999 + ": " + e.getMessage());
-		    inputHandling(scan);
 		}
 	    scan.close();	
     }
@@ -81,7 +80,8 @@ public class CSdict
     	}
     }
     
-    public static void inputHandling(Scanner scan){
+    public static void inputHandling(Scanner scan) throws Exception{
+    	Socket socket = null;
     	while(true) {
 			System.out.print("csdict> ");
 			String inputString = scan.nextLine();
@@ -102,8 +102,7 @@ public class CSdict
 			}
 			
 			//first input to cmd, converted to all lower case
-			String cmd = inputStringArray[0].toLowerCase();
-			
+			String cmd = inputStringArray[0].toLowerCase().trim();
 			
 			if (inputString.length() <= 0){ //length of input too short
 			    continue;
@@ -114,11 +113,14 @@ public class CSdict
     		} else if(cmd.equals("open")){
 				//TODO: handle command: open SERVER PORT
     			//error out if control connection already open
-    			
+    			if(socket != null){
+    				System.out.println(e900);
+    				continue;
+    			}
+
 				System.out.println("Inside Open: " + cmd);
 				String portNumber = "2628"; //default port
-				String domain = null;
-				
+				String domain = null;				
 				
 				//override default port if port present
 				if(inputStringArray.length == 3){
@@ -147,7 +149,8 @@ public class CSdict
 				int portNumberInt = Integer.valueOf(portNumber);
 				
 				//start connection to domain and port
-				
+
+				socket = new Socket(domain, portNumberInt);
 
 			} else if(cmd.equals("dict")){
 				//TODO: handle command
