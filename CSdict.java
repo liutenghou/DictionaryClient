@@ -42,39 +42,37 @@ public class CSdict
 					String inputString = new String(cmdString);
 					inputString = inputString.trim();
 
-					String cmd;
-					if(inputString.indexOf(" ") >  0){
-						cmd = inputString.substring(0 , inputString.indexOf(" ")).toLowerCase();
-					} else{
-						cmd = inputString.toLowerCase();
-					}
+					//Make the string case insensitive
+					String cmd = inputString.toLowerCase();
 					
 
 					if(cmd.startsWith("open")){
 						//TODO: handle command: open SERVER PORT
-						String[] params = extractParamerters("open" , cmd);
+						String[] params = extractParameters("open" , inputString);
+						System.out.println(params[0]);
+						System.out.println(params[1]);
 
 					} else if(cmd.startsWith("dict")){
 						//TODO: handle command
 						
 					} else if(cmd.startsWith("set")){
 						//TODO: handle command: set DICTIONARY
-						String[] params = extractParamerters("set" , cmd);
+						String[] params = extractParameters("set" , inputString);
 
 					} else if(cmd.startsWith("currdict")){
 						//TODO: handle command
 
 					} else if(cmd.startsWith("define")){
 						//TODO: handle command: define WORD
-						String[] params = extractParamerters("define" , cmd);
+						String[] params = extractParameters("define" , inputString);
 
 					} else if(cmd.startsWith("match")){
 						//TODO: handle command: match WORD
-						String[] params = extractParamerters("match" , cmd);
+						String[] params = extractParameters("match" , inputString);
 
 					} else if(cmd.startsWith("prefixmatch")){
 						//TODO: handle command: prefixmatch WORD
-						String[] params = extractParamerters("prefixmatch" , cmd);
+						String[] params = extractParameters("prefixmatch" , inputString);
 
 					} else if(cmd.startsWith("close")){
 						//TODO: handle command
@@ -97,11 +95,10 @@ public class CSdict
     //input: the whole input string
     //will always return a String[] of size 2, with the second element being empty if there's
     //only one param
-    private static String[] extractParamerters(String command, String input){
+    private static String[] extractParameters(String command, String input){
     	String[] paramArr = new String[2];
     	//remove the command from the input and trim the whitespace
     	String paramStr = input.substring(command.length() , input.length()).trim();
-
     	int firstSpaceIdx = paramStr.indexOf(" ");
 
     	if(firstSpaceIdx < 0){
