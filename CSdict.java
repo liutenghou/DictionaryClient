@@ -1,8 +1,8 @@
 
 import java.lang.System;
 import java.util.Scanner;
-import java.net.Socket;
-import java.net.ServerSocket;
+import java.io.*;
+import java.net.*;
 
 //
 // This is an implementation of a simplified version of a command 
@@ -82,6 +82,11 @@ public class CSdict
     
     public static void inputHandling(Scanner scan) throws Exception{
     	Socket socket = null;
+    	PrintWriter out = null;
+    	BufferedReader in = null;
+
+    	String displayString = null;
+
     	while(true) {
 			System.out.print("csdict> ");
 			String inputString = scan.nextLine();
@@ -151,9 +156,16 @@ public class CSdict
 				//start connection to domain and port
 
 				socket = new Socket(domain, portNumberInt);
+				out = new PrintWriter(socket.getOutputStream(), true);
+           		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+           		displayString = in.readLine();
+				System.out.println(displayString);
 
 			} else if(cmd.equals("dict")){
 				//TODO: handle command
+				out.println("SHOW DB");
+				System.out.println(in.readLine());
 				
 			} else if(cmd.equals("set")){
 				//TODO: handle command: set DICTIONARY
@@ -164,14 +176,27 @@ public class CSdict
 
 			} else if(cmd.equals("define")){
 				//TODO: handle command: define WORD
-			
+				out.println("DEFINE ! " + inputStringArray[1]);
+				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
+					System.out.println(displayString);
+					//need to figure out how to exit loop
+				}							
 
 			} else if(cmd.equals("match")){
 				//TODO: handle command: match WORD
-				
+				out.println("MATCH " + inputStringArray[1]); //TODO: not correct format
+				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
+					System.out.println(displayString);
+					//need to figure out how to exit loop
+				}				
 
 			} else if(cmd.equals("prefixmatch")){
 				//TODO: handle command: prefixmatch WORD
+				out.println("DEFINE ! " + inputStringArray[1]); //TODO: not correct format
+				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
+					System.out.println(displayString);
+					//need to figure out how to exit loop
+				}
 			
 
 			} else if(cmd.equals("close")){
