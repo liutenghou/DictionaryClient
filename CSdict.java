@@ -85,7 +85,7 @@ public class CSdict
     	PrintWriter out = null;
     	BufferedReader in = null;
 
-    	String displayString = null;
+    	
 
     	while(true) {
 			System.out.print("csdict> ");
@@ -159,8 +159,8 @@ public class CSdict
 				out = new PrintWriter(socket.getOutputStream(), true);
            		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-           		displayString = in.readLine();
-				System.out.println(displayString);
+           		//TODO: change this to displayResponse(in) once we figure out how to find end of response
+				System.out.println(in.readLine());
 
 			} else if(cmd.equals("dict")){
 				//TODO: handle command
@@ -177,26 +177,17 @@ public class CSdict
 			} else if(cmd.equals("define")){
 				//TODO: handle command: define WORD
 				out.println("DEFINE ! " + inputStringArray[1]);
-				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
-					System.out.println(displayString);
-					//need to figure out how to exit loop
-				}							
+				displayResponse(in);							
 
 			} else if(cmd.equals("match")){
 				//TODO: handle command: match WORD
 				out.println("MATCH " + inputStringArray[1]); //TODO: not correct format
-				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
-					System.out.println(displayString);
-					//need to figure out how to exit loop
-				}				
+				displayResponse(in);				
 
 			} else if(cmd.equals("prefixmatch")){
 				//TODO: handle command: prefixmatch WORD
 				out.println("DEFINE ! " + inputStringArray[1]); //TODO: not correct format
-				while((displayString = in.readLine()) != null && (displayString = in.readLine()) != ""){
-					System.out.println(displayString);
-					//need to figure out how to exit loop
-				}
+				displayResponse(in);
 			
 
 			} else if(cmd.equals("close")){
@@ -211,6 +202,15 @@ public class CSdict
 		}	
     	
     }
+
+    public static void displayResponse(BufferedReader in) throws Exception{
+    	String displayString = null;
+
+    	while((displayString = in.readLine()) != null && (displayString = in.readLine()) != "\r\n.\r\n"){
+			System.out.println(displayString);
+			//need to figure out how to exit loop
+		}
+}
 
     
 }
