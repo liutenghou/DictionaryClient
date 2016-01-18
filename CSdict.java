@@ -83,9 +83,7 @@ public class CSdict
     public static void inputHandling(Scanner scan) throws Exception{
     	Socket socket = null;
     	PrintWriter out = null;
-    	BufferedReader in = null;
-
-    	
+    	BufferedReader in = null;    	
 
     	while(true) {
 			System.out.print("csdict> ");
@@ -177,22 +175,38 @@ public class CSdict
 			} else if(cmd.equals("define")){
 				//TODO: handle command: define WORD
 				out.println("DEFINE ! " + inputStringArray[1]);
+
+				//if no definition
+				//System.out.println("**No definition found**");
+
 				displayResponse(in);							
 
 			} else if(cmd.equals("match")){
-				//TODO: handle command: match WORD
-				out.println("MATCH " + inputStringArray[1]); //TODO: not correct format
+				//TODO: figure out what goes in the 'database' part
+				out.println("MATCH database exact " + inputStringArray[1]);
+
+				//if no match
+				//System.out.println("****No matching word(s) found****");
+
 				displayResponse(in);				
 
 			} else if(cmd.equals("prefixmatch")){
-				//TODO: handle command: prefixmatch WORD
-				out.println("DEFINE ! " + inputStringArray[1]); //TODO: not correct format
+				//TODO: figure out what goes in the 'database' part
+				out.println("MATCH database prefix " + inputStringArray[1]);
+
+				//if no prefix match
+				//System.out.println("*****No prefix matches found*****");
+
 				displayResponse(in);
 			
 
 			} else if(cmd.equals("close")){
-				//TODO: handle command
-
+				if(socket != null && !socket.isClosed()){
+					socket.close();
+					socket = null;
+			    	out = null;
+			    	in = null;
+				}
 			} else if(cmd.equals("quit")){
 				System.out.println("Thanks for visiting, come back soon!");
 				break;
