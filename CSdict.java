@@ -26,7 +26,7 @@ public class CSdict
     static String e996 = "996 Too many command line options - Only -d is allowed";
     static String e997 = "997 Invalid command line option - Only -d is allowed";
     static String e998 = "998 Input error while reading commands, terminating";
-    static String e999 = "999 Processing error. yyyy";
+    static String e999 = "999 Processing error.";
 
     public static void main(String [] args)
     {
@@ -53,7 +53,7 @@ public class CSdict
 		try{
 			inputHandling(scan);
 		} catch (Exception e) {
-		    System.err.println(e999 + ": " + e.getMessage());
+		    System.err.println(e999 + " " + e.getMessage());
 		}
 	    scan.close();	
     }
@@ -85,26 +85,19 @@ public class CSdict
     	PrintWriter out = null;
     	BufferedReader in = null;
 
-    	//By default all db will be searched
+    	//default dictionary, search all dictionaries
     	String currentDict = "*";
 
     	while(true) {
 			System.out.print("csdict> ");
-			String inputString = scan.nextLine();
-			inputString = inputString.trim();
-			
-			System.out.println("You typed: "+inputString); //TEST
+			String inputString = scan.nextLine().trim();
 			
 			//input string to array, delimited by 0 or more spaces or tabs
 			String[] inputStringArray = inputString.split("[ *\t*]");
+			
 			if(inputStringArray.length > 3){
 				System.out.println(e901);
 				continue;
-			}
-			
-			//TEST: input is read correctly
-			for(String x: inputStringArray){
-				System.out.println(x);
 			}
 			
 			//first input to cmd, converted to all lower case
@@ -117,14 +110,12 @@ public class CSdict
 				
 			// Start processing the command here.	
     		} else if(cmd.equals("open")){
-				//TODO: handle command: open SERVER PORT
     			//error out if control connection already open
-    			if(socket != null){
+    			if(socket != null && !socket.isClosed()){
     				System.out.println(e900);
     				continue;
     			}
 
-				System.out.println("Inside Open: " + cmd);
 				String portNumber = "2628"; //default port
 				String domain = null;				
 				
@@ -132,6 +123,7 @@ public class CSdict
 				if(inputStringArray.length == 3){
 					portNumber = inputStringArray[2];
 					domain = inputStringArray[1];
+					//TODO: don't need input validation, remove
 					//check that the port number is a number, error out if not
 					if(!isNumber(portNumber)){
 						System.out.println(e902);
@@ -142,9 +134,7 @@ public class CSdict
 						System.out.println(e902);
 						continue;
 					}
-					
-				//test input for domain and port
-				System.out.println("domain: " + domain + " port: " + portNumber);
+				
 				//incorrect number of arguments	
 				} else if(inputStringArray.length == 2){
 					domain = inputStringArray[1];
@@ -166,16 +156,31 @@ public class CSdict
 				socket = new Socket(domain, portNumberInt);
 				out = new PrintWriter(socket.getOutputStream(), true);
            		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+           		
+				//test input for domain and port
+				System.out.println("Connection Successful to domain: " + domain + " port: " + portNumber);
            		displayResponse(in);
 
 			} else if(cmd.equals("dict")){
+				
+				//check number of arguments
+				if(inputStringArray.length != 1){
+					System.out.println(e901);
+					break;
+				}
+				
 				out.println("SHOW DB");
 				displayResponse(in);
 				
 			} else if(cmd.equals("set")){
-				currentDict = inputStringArray[1];				
-
+				
+				//check number of arguments
+				if(inputStringArray.length != 2){
+					System.out.println(e901);
+					break;
+				}
+				currentDict = inputStringArray[1];	
+	
 			} else if(cmd.equals("currdict")){
 				System.out.println(currentDict);
 
@@ -227,7 +232,7 @@ public class CSdict
 
 			if(displayString.length() > 4){
 				String endResponseTest = displayString.substring(0,4);
-				if(endResponseTest.matches("[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+				if(endResponseTest.matches("^[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
 					break;
 				}
 			}
