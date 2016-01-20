@@ -167,8 +167,7 @@ public class CSdict
 				out = new PrintWriter(socket.getOutputStream(), true);
            		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-           		//TODO: change this to displayResponse(in) once we figure out how to find end of response
-				System.out.println(in.readLine());
+           		displayResponse(in);
 
 			} else if(cmd.equals("dict")){
 				out.println("SHOW DB");
@@ -222,9 +221,16 @@ public class CSdict
     public static void displayResponse(BufferedReader in) throws Exception {
     	String displayString = null;
 
-    	while((displayString = in.readLine()) != null && (displayString = in.readLine()) != "\r\n.\r\n"){
+    	//&& !displayString.startsWith("250 ok") this part is not right, but will do for now
+    	while((displayString = in.readLine()) != null){
 			System.out.println(displayString);
-			//need to figure out how to exit loop
+
+			if(displayString.length() > 4){
+				String endResponseTest = displayString.substring(0,4);
+				if(endResponseTest.matches("[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+					break;
+				}
+			}
 		}
 	}
 
