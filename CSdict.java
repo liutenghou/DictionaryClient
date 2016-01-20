@@ -83,7 +83,10 @@ public class CSdict
     public static void inputHandling(Scanner scan) throws Exception{
     	Socket socket = null;
     	PrintWriter out = null;
-    	BufferedReader in = null;    	
+    	BufferedReader in = null;
+
+    	//By default all db will be searched
+    	String currentDict = "*";
 
     	while(true) {
 			System.out.print("csdict> ");
@@ -143,7 +146,14 @@ public class CSdict
 				//test input for domain and port
 				System.out.println("domain: " + domain + " port: " + portNumber);
 				//incorrect number of arguments	
-				}else if(inputStringArray.length <= 1 || inputStringArray.length > 3){
+				} else if(inputStringArray.length == 2){
+					domain = inputStringArray[1];
+					//check that the domain is formatted correctly
+					if(!isDomain(domain)){
+						System.out.println(e902);
+						continue;
+					}
+				} else if(inputStringArray.length <= 1 || inputStringArray.length > 3){
 					System.out.println(e901);
 					continue;
 				}
@@ -161,20 +171,18 @@ public class CSdict
 				System.out.println(in.readLine());
 
 			} else if(cmd.equals("dict")){
-				//TODO: handle command
 				out.println("SHOW DB");
-				System.out.println(in.readLine());
+				displayResponse(in);
 				
 			} else if(cmd.equals("set")){
-				//TODO: handle command: set DICTIONARY
-				
+				currentDict = inputStringArray[1];				
 
 			} else if(cmd.equals("currdict")){
-				//TODO: handle command
+				System.out.println(currentDict);
 
 			} else if(cmd.equals("define")){
 				//TODO: handle command: define WORD
-				out.println("DEFINE ! " + inputStringArray[1]);
+				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
 
 				//if no definition
 				//System.out.println("**No definition found**");
@@ -182,23 +190,17 @@ public class CSdict
 				displayResponse(in);							
 
 			} else if(cmd.equals("match")){
-				//TODO: figure out what goes in the 'database' part
-				out.println("MATCH database exact " + inputStringArray[1]);
+				match(currentDict, inputStringArray[1], true, out, in);
 
 				//if no match
-				//System.out.println("****No matching word(s) found****");
-
-				displayResponse(in);				
+				//System.out.println("****No matching word(s) found****");			
 
 			} else if(cmd.equals("prefixmatch")){
-				//TODO: figure out what goes in the 'database' part
-				out.println("MATCH database prefix " + inputStringArray[1]);
+				match(currentDict, inputStringArray[1], false, out, in);
 
 				//if no prefix match
 				//System.out.println("*****No prefix matches found*****");
-
-				displayResponse(in);
-			
+		
 
 			} else if(cmd.equals("close")){
 				if(socket != null && !socket.isClosed()){
@@ -217,14 +219,24 @@ public class CSdict
     	
     }
 
-    public static void displayResponse(BufferedReader in) throws Exception{
+    public static void displayResponse(BufferedReader in) throws Exception {
     	String displayString = null;
 
     	while((displayString = in.readLine()) != null && (displayString = in.readLine()) != "\r\n.\r\n"){
 			System.out.println(displayString);
 			//need to figure out how to exit loop
 		}
-}
+	}
+
+	private static void match(String dictionary, String word, Boolean isExact, PrintWriter out, BufferedReader in) throws Exception {
+		String method = "exact";
+		if(!isExact){
+			method = "prefix";
+		}
+		out.println("MATCH " + dictionary + " " + method + " " + word);
+
+		displayResponse(in);
+	}
 
     
 }
