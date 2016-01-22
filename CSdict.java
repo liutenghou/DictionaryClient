@@ -57,7 +57,9 @@ public class CSdict
 			System.out.println(); //new line
 			//don't do anything, input is ctrl-d
 		} catch (Exception e) {
-		    System.err.println(e999 + " " + e.getMessage());
+		    System.out.println(e999 + " " + e.getMessage());
+		    //TEST for exception type.name
+		    System.out.println("exception name: " + e.getClass().getName());
 		}
 	    scan.close();	
     }
@@ -125,17 +127,24 @@ public class CSdict
 					continue;
 				}
 				
-				//convert portNumber to int
-				int portNumberInt = Integer.valueOf(portNumber);
-				
-				//start connection to domain and port
+				try{
+					//convert portNumber to int
+					int portNumberInt = Integer.valueOf(portNumber);
+					
+					//start connection to domain and port
 
-				socket = new Socket(domain, portNumberInt);
-				out = new PrintWriter(socket.getOutputStream(), true);
-           		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-           		
-				//test input for domain and port
-           		displayResponse(in);
+					socket = new Socket(domain, portNumberInt);
+					out = new PrintWriter(socket.getOutputStream(), true);
+	           		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	           		
+					//test input for domain and port
+	           		displayResponse(in);
+				}catch(NoRouteToHostException e){
+					System.out.println(e902);
+				}catch(NumberFormatException e){
+					System.out.println(e902);
+				}
+				
 
 			} else if(cmd.equals("dict")){
 				//error
