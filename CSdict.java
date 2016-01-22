@@ -224,6 +224,7 @@ public class CSdict
 					socket = null;
 			    	out = null;
 			    	in = null;
+			    	currentDict = "*";
 				}
 			} else if(cmd.equals("quit")){
 				System.out.println("Thanks for visiting, come back soon!");
