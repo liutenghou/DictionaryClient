@@ -89,7 +89,7 @@ public class CSdict
 				System.out.println("test");
 			}
 			//input string to array, delimited by 0 or more spaces or tabs
-			String[] inputStringArray = inputString.split("[ *\t*]");
+			String[] inputStringArray = inputString.split("\\s+");
 			
 			if(inputStringArray.length > 3){
 				System.out.println(e901);
@@ -149,7 +149,6 @@ public class CSdict
 					domain = null;
 				}
 				
-
 			} else if(cmd.equals("dict")){
 				//error
 				if(socket == null || socket.isClosed()){
@@ -201,19 +200,23 @@ public class CSdict
 					continue;
 				}
 				
+				//TODO: e930, no dictionary, in define, match, and prefixmatch
+				
 				
 				//TODO: handle command: define WORD
 				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
 
 				String response = displayResponse(in).substring(0,4);
+				
+				//no definition, cascade to match
 				if(response.matches("^552\\s")){
 					System.out.println("**No definition found**");
 					response = match("*", inputStringArray[1], true, out, in).substring(0,4);
 				}
-
+				//no matches, print no dicts
 				if(response.matches("^552\\s")){
 					System.out.println("***No dictionaries have a definition for this word***");					
-				}							
+				}						
 
 			} else if(cmd.equals("match")){
 				//errors
@@ -286,13 +289,17 @@ public class CSdict
 
 			if(displayString.length() > 4){
 				String responseMessage = displayString.substring(0,4);
-				if(responseMessage.matches("^[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+				//TODO: removed 5, because is invalid dictionary, check this
+				if(responseMessage.matches("^[24]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
 					if(debugOn){
 						System.out.println(displayString);
 					}
 					break;
 				} else if(responseMessage.matches("^151\\s")){
 					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
+				} else if(responseMessage.matches("^550 ")){ //invalid dictionary
+						System.out.println(e930);
+						break;
 				}
 			}
 
