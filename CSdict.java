@@ -168,6 +168,10 @@ public class CSdict
            		displayResponse(in);
 
 			} else if(cmd.equals("dict")){
+				//error
+				if(socket != null && !socket.isClosed()){
+					System.out.println(e903);
+				}
 				
 				//check number of arguments
 				if(inputStringArray.length != 1){
@@ -179,7 +183,7 @@ public class CSdict
 				displayResponse(in);
 				
 			} else if(cmd.equals("set")){
-				
+							
 				//check number of arguments
 				if(inputStringArray.length != 2){
 					System.out.println(e901);
@@ -191,6 +195,11 @@ public class CSdict
 				System.out.println(currentDict);
 
 			} else if(cmd.equals("define")){
+				//error
+				if(socket != null && !socket.isClosed()){
+					System.out.println(e903);
+				}
+				
 				//TODO: handle command: define WORD
 				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
 
