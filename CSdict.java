@@ -200,9 +200,6 @@ public class CSdict
 					continue;
 				}
 				
-				//TODO: e930, no dictionary, in define, match, and prefixmatch
-				
-				
 				//TODO: handle command: define WORD
 				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
 
@@ -289,7 +286,7 @@ public class CSdict
 
 			if(displayString.length() > 4){
 				String responseMessage = displayString.substring(0,4);
-				//TODO: removed 5, because is invalid dictionary, check this
+				//TODO: removed 5, because is for other completion responses also, check this
 				if(responseMessage.matches("^[24]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
 					if(debugOn){
 						System.out.println(displayString);
