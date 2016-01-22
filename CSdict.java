@@ -227,8 +227,6 @@ public class CSdict
 				}
 			} else if(cmd.equals("quit")){
 				System.out.println("Thanks for visiting, come back soon!");
-			} else if(inputString == null){
-				System.out.println("no new line");
 			} else{
 				System.out.println(e900);
 			}
