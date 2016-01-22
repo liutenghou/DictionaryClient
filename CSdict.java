@@ -235,12 +235,14 @@ public class CSdict
     	while((displayString = in.readLine()) != null){
 
 			if(displayString.length() > 4){
-				String endResponseTest = displayString.substring(0,4);
-				if(endResponseTest.matches("^[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+				String responseMessage = displayString.substring(0,4);
+				if(responseMessage.matches("^[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
 					if(debugOn){
 						System.out.println(displayString);
 					}
 					break;
+				} else if(responseMessage.matches("^151\\s")){
+					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
 				}
 			}
 
