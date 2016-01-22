@@ -188,23 +188,29 @@ public class CSdict
 				//TODO: handle command: define WORD
 				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
 
-				//if no definition
-				//System.out.println("**No definition found**");
+				String response = displayResponse(in).substring(0,4);
+				if(response.matches("^552\\s")){
+					System.out.println("**No definition found**");
+					response = match("*", inputStringArray[1], true, out, in).substring(0,4);
+				}
 
-				displayResponse(in);							
+				if(response.matches("^552\\s")){
+					System.out.println("***No dictionaries have a definition for this word***");					
+				}							
 
 			} else if(cmd.equals("match")){
-				match(currentDict, inputStringArray[1], true, out, in);
-
-				//if no match
-				//System.out.println("****No matching word(s) found****");			
+				String response = match(currentDict, inputStringArray[1], true, out, in).substring(0,4);
+				
+				if(response.matches("^552\\s")){
+					System.out.println("****No matching word(s) found****");					
+				}		
 
 			} else if(cmd.equals("prefixmatch")){
-				match(currentDict, inputStringArray[1], false, out, in);
+				String response = match(currentDict, inputStringArray[1], false, out, in).substring(0,4);
 
-				//if no prefix match
-				//System.out.println("*****No prefix matches found*****");
-		
+				if(response.matches("^552\\s")){
+					System.out.println("*****No prefix matches found*****");					
+				}	
 
 			} else if(cmd.equals("close")){
 				if(socket != null && !socket.isClosed()){
@@ -223,30 +229,35 @@ public class CSdict
     	
     }
 
-    public static void displayResponse(BufferedReader in) throws Exception {
+    public static String displayResponse(BufferedReader in) throws Exception {
     	String displayString = null;
 
-    	//&& !displayString.startsWith("250 ok") this part is not right, but will do for now
     	while((displayString = in.readLine()) != null){
-			System.out.println(displayString);
 
 			if(displayString.length() > 4){
 				String endResponseTest = displayString.substring(0,4);
 				if(endResponseTest.matches("^[245]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+					if(debugOn){
+						System.out.println(displayString);
+					}
 					break;
 				}
 			}
+
+			System.out.println(displayString);
 		}
+
+		return displayString;
 	}
 
-	private static void match(String dictionary, String word, Boolean isExact, PrintWriter out, BufferedReader in) throws Exception {
+	private static String match(String dictionary, String word, Boolean isExact, PrintWriter out, BufferedReader in) throws Exception {
 		String method = "exact";
 		if(!isExact){
 			method = "prefix";
 		}
 		out.println("MATCH " + dictionary + " " + method + " " + word);
 
-		displayResponse(in);
+		return displayResponse(in);
 	}
 
     
