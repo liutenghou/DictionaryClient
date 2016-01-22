@@ -84,6 +84,16 @@ public class CSdict
     	}
     }
     
+    public static void closeConnection(Socket socket, PrintWriter out, BufferedReader in, String currentDict) throws Exception{
+    	if(socket != null && !socket.isClosed()){
+			socket.close();
+			socket = null;
+	    	out = null;
+	    	in = null;
+	    	currentDict = "*";
+		}
+    }
+    
     public static void inputHandling(Scanner scan) throws Exception{
     	Socket socket = null;
     	PrintWriter out = null;
@@ -164,19 +174,18 @@ public class CSdict
            		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
            		
 				//test input for domain and port
-				System.out.println("Connection Successful to domain: " + domain + " port: " + portNumber);
            		displayResponse(in);
 
 			} else if(cmd.equals("dict")){
 				//error
-				if(socket != null && !socket.isClosed()){
+				if(socket == null || socket.isClosed()){
 					System.out.println(e903);
 				}
 				
 				//check number of arguments
 				if(inputStringArray.length != 1){
 					System.out.println(e901);
-					break;
+					continue;
 				}
 				
 				out.println("SHOW DB");
@@ -187,17 +196,28 @@ public class CSdict
 				//check number of arguments
 				if(inputStringArray.length != 2){
 					System.out.println(e901);
-					break;
+					continue;
 				}
 				currentDict = inputStringArray[1];	
 	
 			} else if(cmd.equals("currdict")){
+				//check number of arguments
+				if(inputStringArray.length != 1){
+					System.out.println(e901);
+					continue;
+				}
 				System.out.println(currentDict);
 
 			} else if(cmd.equals("define")){
-				//error
-				if(socket != null && !socket.isClosed()){
+				//errors
+				//check number of arguments
+				if(inputStringArray.length != 2){
+					System.out.println(e901);
+					continue;
+				}
+				if(socket == null || socket.isClosed()){
 					System.out.println(e903);
+					continue;
 				}
 				
 				//TODO: handle command: define WORD
@@ -214,6 +234,17 @@ public class CSdict
 				}							
 
 			} else if(cmd.equals("match")){
+				//errors
+				//check number of arguments
+				if(inputStringArray.length != 2){
+					System.out.println(e901);
+					continue;
+				}
+				if(socket == null || socket.isClosed()){
+					System.out.println(e903);
+					continue;
+				}
+				
 				String response = match(currentDict, inputStringArray[1], true, out, in).substring(0,4);
 				
 				if(response.matches("^552\\s")){
@@ -221,6 +252,17 @@ public class CSdict
 				}		
 
 			} else if(cmd.equals("prefixmatch")){
+				//errors
+				//check number of arguments
+				if(inputStringArray.length != 2){
+					System.out.println(e901);
+					continue;
+				}
+				if(socket == null || socket.isClosed()){
+					System.out.println(e903);
+					continue;
+				}
+				
 				String response = match(currentDict, inputStringArray[1], false, out, in).substring(0,4);
 
 				if(response.matches("^552\\s")){
@@ -228,15 +270,26 @@ public class CSdict
 				}	
 
 			} else if(cmd.equals("close")){
-				if(socket != null && !socket.isClosed()){
-					socket.close();
-					socket = null;
-			    	out = null;
-			    	in = null;
-			    	currentDict = "*";
+				//errors
+				//check number of arguments
+				if(inputStringArray.length != 1){
+					System.out.println(e901);
+					continue;
 				}
+				if(socket == null || socket.isClosed()){
+					System.out.println(e903);
+					continue;
+				}
+				
+				closeConnection(socket, out, in, currentDict);
 			} else if(cmd.equals("quit")){
-				System.out.println("Thanks for visiting, come back soon!");
+				//check number of arguments
+				if(inputStringArray.length != 1){
+					System.out.println(e901);
+					continue;
+				}
+				closeConnection(socket, out, in, currentDict);
+				break;
 			} else{
 				System.out.println(e900);
 			}
