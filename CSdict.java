@@ -1,5 +1,6 @@
 
 import java.lang.System;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.io.*;
 import java.net.*;
@@ -52,6 +53,9 @@ public class CSdict
 		//read input
 		try{
 			inputHandling(scan);
+		} catch(NoSuchElementException e){
+			System.out.println(); //new line
+			//don't do anything, input is ctrl-d
 		} catch (Exception e) {
 		    System.err.println(e999 + " " + e.getMessage());
 		}
@@ -91,7 +95,9 @@ public class CSdict
     	while(true) {
 			System.out.print("csdict> ");
 			String inputString = scan.nextLine().trim();
-			
+			if(inputString == null){
+				System.out.println("test");
+			}
 			//input string to array, delimited by 0 or more spaces or tabs
 			String[] inputStringArray = inputString.split("[ *\t*]");
 			
@@ -215,7 +221,8 @@ public class CSdict
 				}
 			} else if(cmd.equals("quit")){
 				System.out.println("Thanks for visiting, come back soon!");
-				break;
+			} else if(inputString == null){
+				System.out.println("no new line");
 			} else{
 				System.out.println(e900);
 			}
