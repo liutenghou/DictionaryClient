@@ -143,6 +143,10 @@ public class CSdict
 					System.out.println(e902);
 				}catch(NumberFormatException e){ //port is not number
 					System.out.println(e902); 
+				}catch(ConnectException e){
+					System.out.println("920 Control connection to " + domain + " on port " + portNumber + " failed to open");
+					portNumber = "2628";
+					domain = null;
 				}
 				
 
