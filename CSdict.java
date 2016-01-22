@@ -62,28 +62,6 @@ public class CSdict
 	    scan.close();	
     }
     
-    public static boolean isNumber(String n){
-    	if(n.matches("[0-9]+")){
-			return true;
-		}else{
-			return false;
-		}
-    }
-    
-    public static boolean isDomain(String n){
-    	if(n.matches("^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\."
-    		+"([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
-    		+"\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
-    		+"\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$")
-    		||
-    		n.matches("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$")
-    		){
-    		return true;
-    	}else{
-    		return false;
-    	}
-    }
-    
     public static void closeConnection(Socket socket, PrintWriter out, BufferedReader in, String currentDict) throws Exception{
     	if(socket != null && !socket.isClosed()){
 			socket.close();
@@ -138,27 +116,10 @@ public class CSdict
 				//override default port if port present
 				if(inputStringArray.length == 3){
 					portNumber = inputStringArray[2];
-					domain = inputStringArray[1];
-					//TODO: don't need input validation, remove
-					//check that the port number is a number, error out if not
-					if(!isNumber(portNumber)){
-						System.out.println(e902);
-						continue;
-					}
-					//check that the domain is formatted correctly
-					if(!isDomain(domain)){
-						System.out.println(e902);
-						continue;
-					}
-				
+					domain = inputStringArray[1];		
 				//incorrect number of arguments	
 				} else if(inputStringArray.length == 2){
-					domain = inputStringArray[1];
-					//check that the domain is formatted correctly
-					if(!isDomain(domain)){
-						System.out.println(e902);
-						continue;
-					}
+					domain = inputStringArray[1];					
 				} else if(inputStringArray.length <= 1 || inputStringArray.length > 3){
 					System.out.println(e901);
 					continue;
