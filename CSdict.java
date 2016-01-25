@@ -289,10 +289,13 @@ public class CSdict
 				//TODO: removed 5, because is for other completion responses also, check this
 				if(responseMessage.matches("^[24]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
 					if(debugOn){
-						System.out.println(displayString);
+						System.out.println("<-- " + displayString);
 					}
 					break;
 				} else if(responseMessage.matches("^151\\s")){
+					if(debugOn){
+						System.out.println("<-- " + displayString);
+					}
 					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
 				} else if(responseMessage.matches("^550 ")){ //invalid dictionary
 						System.out.println(e930);
@@ -311,7 +314,13 @@ public class CSdict
 		if(!isExact){
 			method = "prefix";
 		}
-		out.println("MATCH " + dictionary + " " + method + " " + word);
+
+		String commandString = "MATCH " + dictionary + " " + method + " " + word;
+
+		if(debugOn){
+			System.out.println("--> " + commandString);
+		}
+		out.println(commandString);
 
 		return displayResponse(in);
 	}
