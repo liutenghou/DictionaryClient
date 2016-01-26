@@ -5,7 +5,7 @@ CSdict.jar: CSdict.java
 
 
 run: CSdict.jar
-	java -jar CSdict.jar -d
+	java -jar CSdict.jar
 
 clean:
 	rm -f *.class
