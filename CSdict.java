@@ -160,8 +160,13 @@ public class CSdict
 					System.out.println(e901);
 					continue;
 				}
+
+				String commandString = "SHOW DB";
+				if(debugOn){
+					System.out.println("--> " + commandString);
+				}
 				
-				out.println("SHOW DB");
+				out.println(commandString);
 				displayResponse(in);
 				
 			} else if(cmd.equals("set")){
@@ -200,8 +205,12 @@ public class CSdict
 					continue;
 				}
 				
-				//TODO: handle command: define WORD
-				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
+				String commandString = "DEFINE " + currentDict + " " + inputStringArray[1];
+				if(debugOn){
+					System.out.println("--> " + commandString);
+				}
+				
+				out.println(commandString);
 
 				String response = displayResponse(in).substring(0,4);
 				
@@ -264,6 +273,7 @@ public class CSdict
 				}
 				
 				closeConnection(socket, out, in, currentDict);
+				currentDict = "*";
 			} else if(cmd.equals("quit")){
 				//check number of arguments
 				if(inputStringArray.length != 1){
@@ -292,14 +302,17 @@ public class CSdict
 						System.out.println("<-- " + displayString);
 					}
 					break;
-				} else if(responseMessage.matches("^151\\s")){
+				} else if(responseMessage.matches("^1\\d\\d\\s")){
 					if(debugOn){
 						System.out.println("<-- " + displayString);
 					}
 					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
 				} else if(responseMessage.matches("^550 ")){ //invalid dictionary
-						System.out.println(e930);
-						break;
+					System.out.println(e930);
+					break;
+				}
+				else if(responseMessage.matches("^552 ")){ //invalid dictionary
+					break;
 				}
 			}
 
