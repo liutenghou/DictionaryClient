@@ -287,7 +287,10 @@ public class CSdict
 			if(displayString.length() > 4){
 				String responseMessage = displayString.substring(0,4);
 				//TODO: removed 5, because is for other completion responses also, check this
-				if(responseMessage.matches("^[24]\\d\\d\\s")){ //responses that start with a 2,4 or 5 are completion responses
+				//TODO: separate 250 for ok completion
+				//TODO: deal with time out from host: Connection closed by foreign host.
+				//responses that start with a 2,4 or 5 are completion responses
+				if(responseMessage.matches("^[24]\\d\\d\\s")){ 
 					if(debugOn){
 						System.out.println(displayString);
 					}
@@ -295,8 +298,11 @@ public class CSdict
 				} else if(responseMessage.matches("^151\\s")){
 					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
 				} else if(responseMessage.matches("^550 ")){ //invalid dictionary
-						System.out.println(e930);
-						break;
+					if(debugOn){
+						System.out.println(displayString);
+					}
+					System.out.println(e930);
+					break;
 				}
 			}
 
