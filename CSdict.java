@@ -160,8 +160,13 @@ public class CSdict
 					System.out.println(e901);
 					continue;
 				}
+
+				String commandString = "SHOW DB";
+				if(debugOn){
+					System.out.println("--> " + commandString);
+				}
 				
-				out.println("SHOW DB");
+				out.println(commandString);
 				displayResponse(in);
 				
 			} else if(cmd.equals("set")){
@@ -200,8 +205,12 @@ public class CSdict
 					continue;
 				}
 				
-				//TODO: handle command: define WORD
-				out.println("DEFINE " + currentDict + " " + inputStringArray[1]);
+				String commandString = "DEFINE " + currentDict + " " + inputStringArray[1];
+				if(debugOn){
+					System.out.println("--> " + commandString);
+				}
+				
+				out.println(commandString);
 
 				String response = displayResponse(in).substring(0,4);
 				
@@ -264,6 +273,7 @@ public class CSdict
 				}
 				
 				closeConnection(socket, out, in, currentDict);
+				currentDict = "*";
 			} else if(cmd.equals("quit")){
 				//check number of arguments
 				if(inputStringArray.length != 1){
@@ -292,16 +302,22 @@ public class CSdict
 				//responses that start with a 2,4 or 5 are completion responses
 				if(responseMessage.matches("^[24]\\d\\d\\s")){ 
 					if(debugOn){
-						System.out.println(displayString);
+						System.out.println("<-- " + displayString);
 					}
 					break;
-				} else if(responseMessage.matches("^151\\s")){
+				} else if(responseMessage.matches("^1\\d\\d\\s")){
+					if(debugOn){
+						System.out.println("<-- " + displayString);
+					}
 					displayString = displayString.replaceFirst("^151\\s\"[A-Za-z]+\"\\s","@ ");
 				} else if(responseMessage.matches("^550 ")){ //invalid dictionary
 					if(debugOn){
 						System.out.println(displayString);
 					}
 					System.out.println(e930);
+					break;
+				}
+				else if(responseMessage.matches("^552 ")){ //word not found
 					break;
 				}
 			}
@@ -317,7 +333,13 @@ public class CSdict
 		if(!isExact){
 			method = "prefix";
 		}
-		out.println("MATCH " + dictionary + " " + method + " " + word);
+
+		String commandString = "MATCH " + dictionary + " " + method + " " + word;
+
+		if(debugOn){
+			System.out.println("--> " + commandString);
+		}
+		out.println(commandString);
 
 		return displayResponse(in);
 	}
