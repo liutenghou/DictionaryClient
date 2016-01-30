@@ -85,8 +85,9 @@ public class CSdict
     	while(true) {
 			System.out.print("csdict> ");
 			String inputString = scan.nextLine().trim();
-			if(inputString == null){
-				System.out.println("test");
+			if(inputString == null){ //shouldn't ever be triggered
+				System.out.println(e998);
+				break;
 			}
 			//input string to array, delimited by 0 or more spaces or tabs
 			String[] inputStringArray = inputString.split("\\s+");
@@ -296,11 +297,10 @@ public class CSdict
 
 			if(displayString.length() > 4){
 				String responseMessage = displayString.substring(0,4);
-				//TODO: removed 5, because is for other completion responses also, check this
 				//TODO: separate 250 for ok completion
 				//TODO: deal with time out from host: Connection closed by foreign host.
 				//responses that start with a 2,4 or 5 are completion responses
-				if(responseMessage.matches("^[24]\\d\\d\\s")){ 
+				if(responseMessage.matches("^[245]\\d\\d\\s") && !responseMessage.matches("^552 ") && !responseMessage.matches("^550 ")){ 
 					if(debugOn){
 						System.out.println("<-- " + displayString);
 					}
