@@ -15,7 +15,13 @@ public class CSdict
     static final int MAX_LEN = 255;
     static final int PERMITTED_ARGUMENT_COUNT = 1;
     static Boolean debugOn = false;
-    
+    static Boolean quitCommandExecuted = false;
+    static Socket socket = null;
+	static PrintWriter out = null;
+	static BufferedReader in = null;
+	//default dictionary, search all dictionaries
+	static String currentDict = "*";
+	
     //error messages
     static String e900 = "900 Invalid command";
     static String e901 = "901 Incorrect number of arguments";
@@ -38,12 +44,12 @@ public class CSdict
 		if (args.length == PERMITTED_ARGUMENT_COUNT) {
 		    debugOn = args[0].equals("-d");
 		    if (debugOn) {
-			System.out.println("Debugging output enabled");
+		    	System.out.println("Debugging output enabled");
 		    } else {
-			System.out.println("997 Invalid command line option - Only -d is allowed");
-			scan.close();
-			return;
-	            } 
+				System.out.println("997 Invalid command line option - Only -d is allowed");
+				scan.close();
+				return;
+	        } 
 		} else if (args.length > PERMITTED_ARGUMENT_COUNT) {
 		    System.out.println("996 Too many command line options - Only -d is allowed");
 		    scan.close();
@@ -51,16 +57,36 @@ public class CSdict
 		}
 		
 		//read input
-		try{
-			inputHandling(scan);
-		} catch(NoSuchElementException e){
-			System.out.println(); //new line
-			//don't do anything, input is ctrl-d
-		} catch (Exception e) {
-		    System.out.println(e999 + " " + e.getMessage());
-		    //TEST for exception type.name
-		    System.out.println("exception name: " + e.getClass().getName());
+		while(!quitCommandExecuted){
+			try{
+				inputHandling(scan);
+			} catch(NoSuchElementException e){
+				System.out.println(); //new line
+				quitCommandExecuted = true;
+				//don't do anything, input is ctrl-d
+			} catch(SocketException e){
+				System.out.println(e925);
+				if(socket != null && !socket.isClosed()){
+					socket = null;
+			    	out = null;
+			    	in = null;
+			    	currentDict = "*";
+				}
+			} catch(IOException e){
+				System.out.println(e925);
+				if(socket != null && !socket.isClosed()){
+					socket = null;
+			    	out = null;
+			    	in = null;
+			    	currentDict = "*";
+				}
+			} catch (Exception e) {
+			    System.out.println(e999 + " " + e.getMessage());
+			    //TEST for exception type.name
+			    //System.out.println("exception name: " + e.getClass().getName());
+			}
 		}
+		
 	    scan.close();	
     }
     
@@ -75,13 +101,7 @@ public class CSdict
     }
     
     public static void inputHandling(Scanner scan) throws Exception{
-    	Socket socket = null;
-    	PrintWriter out = null;
-    	BufferedReader in = null;
-
-    	//default dictionary, search all dictionaries
-    	String currentDict = "*";
-
+    	
     	while(true) {
 			System.out.print("csdict> ");
 			String inputString = scan.nextLine().trim();
@@ -148,6 +168,8 @@ public class CSdict
 					System.out.println("920 Control connection to " + domain + " on port " + portNumber + " failed to open");
 					portNumber = "2628";
 					domain = null;
+				}catch(IllegalArgumentException e){ //port out of range
+					System.out.println(e902); 
 				}
 				
 			} else if(cmd.equals("dict")){
@@ -281,6 +303,7 @@ public class CSdict
 					System.out.println(e901);
 					continue;
 				}
+				quitCommandExecuted = true;
 				closeConnection(socket, out, in, currentDict);
 				break;
 			} else{
@@ -297,8 +320,6 @@ public class CSdict
 
 			if(displayString.length() > 4){
 				String responseMessage = displayString.substring(0,4);
-				//TODO: separate 250 for ok completion
-				//TODO: deal with time out from host: Connection closed by foreign host.
 				//responses that start with a 2,4 or 5 are completion responses
 				if(responseMessage.matches("^[245]\\d\\d\\s") && !responseMessage.matches("^552 ") && !responseMessage.matches("^550 ")){ 
 					if(debugOn){
